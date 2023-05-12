@@ -1,0 +1,68 @@
+          ORG 1000
+terminaprog: dc.w       0
+comandoutente: dc.w  2
+prezzi:      dc.w    1,2,3,0,0,0,0,0,0,0
+pezzi:       dc.w    3,2,1,0,0,0,0,0,0,0
+selezionate: ds.w    10
+selezionaofferte dc.w 3
+
+START:
+      lea prezzi,a0      
+      lea pezzi,a1
+      lea selezionate,a2
+      move selezionaofferte,d6
+      move.w #0,d2               ;contatore dimensione array
+      move.w terminaprog,d0      
+do:      
+      tst.w d0
+      bgt end_prog
+      move.w comandoutente,d1
+      tst.w d1
+      beq comando0
+      cmp.w #1,d1
+      beq comando1
+      cmp.w #2,d1
+      beq comando2      
+      
+comando0:
+         move.w #1,d0
+         bra do
+comando1:
+         bsr write  
+         bra do
+comando2:        
+         bsr read                 ;leggiamo i valori da inserire agli indirizzi in d6 e d7 (prezzo e pezzo) Inserimento offerte, un'offerta alla volta
+         addi #1,d2               ;aggiorno la dimensione
+         cmp.w #10,d2
+         beq end_prog             ;salto se ho finito lo spazio in memoria         
+         bsr OrdinaOfferte
+         bsr stampaofferte
+         cmp.w d6,d2                 ;leggo il valore di selezionaofferta in d6
+         beq seleziona
+         bra do
+seleziona:                  
+         move.w d2,(0,a2,d2)                         ;numero offerta selezionata la scrivo all'indirizzo di selezionata                        
+         bra do                
+write:
+      rts   
+read:    
+      rts
+OrdinaOfferte:
+      move.w (a0)+,d4              ;controlliamo l'ordine uno alla volta
+      cmp.w (a0),d4
+      bgt if1
+      rts
+
+if1:
+    move.w (a0),d5
+    move.w d5,(-4,a0)
+    move.w d4,(a0)
+    rts     
+
+stampaofferte:
+            rts   
+      
+      
+end_prog:
+
+        END START

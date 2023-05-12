@@ -1,0 +1,114 @@
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+
+#define V_MAX 10000
+
+/*  la classe Offerta della versione Java del programma, deve essere tradotta mediante un tipo struttura (nel seguito della specifica si indica con T tale tipo struttura, ma nel programma può essere indicato nel modo che si preferisce)
+    l'array selezionate deve essere tradotto mediante un array di elementi di tipo T
+    gli array prezzi e pezzi devono essere tradotti mediante dei VLA
+    il metodo ordinaOfferte deve essere tradotto mediane una funzione che accetta dei parametri con le stesse funzionalità di quelli della versione Java
+    il metodo stampaOfferte deve essere tradotto mediane una funzione */
+
+struct Offerta{
+   unsigned int *prezzo;
+   unsigned int *pezzi;
+};
+
+int numSelezionate=0;                      //variabili e strutture globali
+struct Offerta o[V_MAX];
+
+void stampaOfferte();       //dichiarazioni funzioni
+void ordinaOfferte();
+
+int main(){
+    struct Offerta selezionate[V_MAX];
+    bool termineProgramma=false;
+    int comandoUtente;
+    printf("Scelta Offerta versione C");
+
+    do{
+        printf("\nInserisci un comando:\n");
+        printf("2: Inserimento e selezione offerte\n");
+        printf("1: Stampa Offerte\n");
+        printf("0: Termina inserimento e stampa offerte\n");
+        scanf("%d",&comandoUtente);
+        if(comandoUtente==0) termineProgramma=true;
+        else if(comandoUtente==1) stampaOfferte();
+        else if(comandoUtente==2) {
+            printf("Quante offerte vuoi inserire?\n");
+            int n;
+            scanf("%d", &n);
+            for (int i = 0; i < n; i++) {
+                selezionate[i].prezzo = malloc(n * sizeof(int));
+                selezionate[i].pezzi = malloc(n * sizeof(int));
+            }
+
+            //Inserimento Offerte
+            printf("Inserisci una serie di offerte:\n");
+            for(int i=0;i<n;i++){
+                printf("Inserisci un'offerta:\n");
+                printf("prezzo:");
+                scanf("%hu",&selezionate[i].prezzo);
+                printf("numero pezzi:");
+                scanf("%hu",&selezionate[i].pezzi);
+            }
+            //ordina offerte
+
+            ordinaOfferte(n,selezionate->prezzo,selezionate->pezzi);
+
+            //stampa offerte inserite
+            printf("Offerta\t%-10s %-10s\n","Prezzo", "Numero pezzi");
+            for(int i=0;i<n;i++){
+                printf(" %d  \t%10hu %10hu\n",i+1,selezionate[i].prezzo, selezionate[i].pezzi);
+            }
+
+            //seleziona offerte
+            printf("Seleziona Offerte\n");
+            bool fineSelezione=false;
+            int selezione;
+            while(numSelezionate<5 && !fineSelezione){
+                printf("Inserisci il numero di un offerta da selezionare (0 per terminare la selezione)\n");
+                scanf("%d",&selezione);
+                if(selezione==0) fineSelezione=true;
+                else {
+                    o[numSelezionate];
+                    o[numSelezionate].prezzo=selezionate[selezione-1].prezzo;
+                    o[numSelezionate].pezzi=selezionate[selezione-1].pezzi;
+                    numSelezionate++;
+                }
+               }
+
+        }
+    }while(!termineProgramma);
+     stampaOfferte();
+     printf("Fine Programma");
+
+    return 0;
+}
+
+void stampaOfferte(){
+    printf("\nOfferte selezionate\n" );
+    printf( "\t%-20s %-5s\n", "Prezzo", "Numero pezzi" );
+    for ( int i = 0 ; i < numSelezionate ; i++ ) {
+        printf( "\t%-20hu %-5hu\n", o[i].prezzo, o[ i ].pezzi );
+    }
+    printf( "\n" );
+}
+
+
+void ordinaOfferte(int dim,int a1[dim],int a2[dim]){
+    for(int i=0;i<dim-1;i++){
+        for(int j=i+1;j<dim;j++){
+            if(a1[i]>a1[j]){
+                int temp=a1[i];
+                a1[i]=a1[j];
+                a1[j]=temp;
+                temp=a2[i];
+                a2[i]=a2[j];
+                a2[j]=temp;
+            }
+        }
+    }
+}
